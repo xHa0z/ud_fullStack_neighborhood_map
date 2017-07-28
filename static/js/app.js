@@ -51,6 +51,9 @@ function errorHandler() {
 var Restaurant = function (restaurant) {
     var self = this;
 
+    var defaultIcon = makeMarkerIcon('0091ff');
+    var highlightedIcon = makeMarkerIcon('FFFF24');
+
     this.name = restaurant.name;
     this.lat = restaurant.coord[0];
     this.lng = restaurant.coord[1];
@@ -72,20 +75,14 @@ var Restaurant = function (restaurant) {
 
 
     this.infoWindow = new google.maps.InfoWindow();
+
     this.marker = new google.maps.Marker({
         position: new google.maps.LatLng(this.lat, this.lng),
         map: map,
-        title: this.name
+        title: this.name,
+        animation: google.maps.Animation.DROP,
+        icon: defaultIcon
     });
-
-    this.showMarker = ko.computed(function () {
-        if (this.visible() == true) {
-            this.marker.setMap(map);
-        } else {
-            this.marker.setMap(null);
-        }
-        return true;
-    }, this);
 
     this.marker.addListener('click', function () {
 
@@ -102,6 +99,24 @@ var Restaurant = function (restaurant) {
             self.marker.setAnimation(null);
         }, 1000);
     });
+
+
+    this.marker.addListener('mouseover', function () {
+      this.setIcon(highlightedIcon);
+    });
+
+    this.marker.addListener('mouseout', function () {
+        this.setIcon(defaultIcon);
+    });
+
+    this.showMarker = ko.computed(function () {
+        if (this.visible() === true) {
+            this.marker.setMap(map);
+        } else {
+            this.marker.setMap(null);
+        }
+        return true;
+    }, this);
 
     this.bounce = function (restaurant) {
         google.maps.event.trigger(self.marker, 'click');
@@ -135,5 +150,16 @@ function AppViewModel() {
             });
         }
     }, self);
+}
+
+function makeMarkerIcon(markerColor) {
+    var markerImage = new google.maps.MarkerImage(
+        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+        '|40|_|%E2%80%A2',
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(10, 34),
+        new google.maps.Size(21,34));
+    return markerImage;
 }
 
