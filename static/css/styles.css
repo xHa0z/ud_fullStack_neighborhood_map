@@ -1,0 +1,41 @@
+html,
+body {
+    font-family: Arial, sans-serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    order: 1
+}
+
+#map {
+    height: 100%;
+    width: 70%;
+    right: 0;
+    position: absolute;
+    top: 0;
+}
+
+#sidebar {
+    position: absolute;
+    left: 2px;
+    overflow: auto;
+    width: 30%;
+    top: 7%;
+}
+
+#form-search {
+    width: 100%;
+    display: inline-block;
+}
+
+#query-input {
+    width: 78%;
+    display: inline-block;
+    margin: 0;
+}
+
+#submit-button {
+    width: 20%;
+    display: inline-block;
+    margin: 0;
+}
