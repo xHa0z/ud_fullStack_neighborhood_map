@@ -86,8 +86,8 @@ var Restaurant = function (restaurant) {
 
     this.marker.addListener('click', function () {
 
-        self.infoWindow.setContent('<div class="info-window-content"><div class="title" style="text-align: center"><b>'
-            + restaurant.name + "</b></div>" +
+        self.infoWindow.setContent('<div class="info-window-content"><div class="title" style="text-align: center"><b>' +
+            restaurant.name + "</b></div>" +
             '<div class="street" style="text-align: center">' + self.street + "</div>" +
             '<div class="city" style="text-align: center">' + self.city + "</div>" +
             '<div class="phone" style="text-align: center">' + self.phone + "</div></div>");
@@ -121,7 +121,7 @@ var Restaurant = function (restaurant) {
     this.bounce = function (restaurant) {
         google.maps.event.trigger(self.marker, 'click');
     };
-}
+};
 
 
 function AppViewModel() {
@@ -137,7 +137,7 @@ function AppViewModel() {
 
     this.filteredList = ko.computed(function () {
         var query = self.query().toLowerCase();
-        if (query == "") {
+        if (query === "") {
             self.restaurantList().forEach(function (restaurant) {
                 restaurant.visible(true);
             });
