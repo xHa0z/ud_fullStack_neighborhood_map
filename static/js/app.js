@@ -59,21 +59,37 @@ function initMap() {
             icon: defaultIcon
         });
         markers.push({'marker': marker, 'name' : marker.title});
-        marker.addListener('click', function() {
-            populateInfoWindow(this, infoWindow);
-        });
-        marker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-        });
-        marker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
-        });
+        // marker.addListener('click', function() {
+        //     populateInfoWindow(this, infoWindow);
+        // });
+        // marker.addListener('mouseover', function() {
+        //     this.setIcon(highlightedIcon);
+        // });
+        // marker.addListener('mouseout', function() {
+        //     this.setIcon(defaultIcon);
+        // });
+        setMarkerAnimation(marker, infoWindow);
 
     }
 
     ko.applyBindings(new AppViewModel());
 }
 
+
+function setMarkerAnimation(marker, infoWindow) {
+    var defaultIcon = makeMarkerIcon('0091ff');
+    var highlightedIcon = makeMarkerIcon('FFFF24');
+    marker.addListener('click', function() {
+        populateInfoWindow(this, infoWindow);
+    });
+    marker.addListener('mouseover', function() {
+        this.setIcon(highlightedIcon);
+    });
+    marker.addListener('mouseout', function() {
+        this.setIcon(defaultIcon);
+    });
+    return marker;
+}
 function errorHandler() {
     console.log("Something wrong with Google Map. Please try again later.");
 }
@@ -91,7 +107,7 @@ function populateInfoWindow(marker, infowindow) {
             marker.title + "</b></div>" +
             '<div class="street" style="text-align: center">' + result.location.formattedAddress[0] + "</div>" +
             '<div class="city" style="text-align: center">' + result.location.formattedAddress[1] + "</div>" +
-            '<div class="phone" style="text-align: center">' + result.contact.phone + "</div></div>")
+            '<div class="phone" style="text-align: center">' + result.contact.phone + "</div></div>");
     });
     infowindow.marker = marker;
     infowindow.open(map, marker);
@@ -125,7 +141,7 @@ function AppViewModel() {
     var self = this;
 
     self.rstList = ko.observableArray([]);
-    self.query = ko.observable("")
+    self.query = ko.observable("");
 
     restaurants.forEach(function(rst) {
        self.rstList.push(new Restaurant(rst))
@@ -141,22 +157,19 @@ function AppViewModel() {
             return  self.rstList();
         } else {
             console.log(222);
-            for (i = 0; i < markers.length; i++) {
+            for (var i = 0; i < markers.length; i++) {
                 var name = markers[i].name;
                 console.log(name);
                 var result = name.toLowerCase().search(query) >= 0;
                 setVisible(markers[i].marker, result);
-                console.log(result)
+                console.log(result);
             }
-            return  self.rstList()
+            return  self.rstList();
         }
     }, self);
-
-
-
 
 }
 
 var Restaurant = function(data) {
     this.name = ko.observable(data.name);
-}
+};
