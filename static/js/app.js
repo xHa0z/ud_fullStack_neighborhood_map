@@ -144,7 +144,7 @@ function AppViewModel() {
     self.query = ko.observable("");
 
     restaurants.forEach(function(rst) {
-       self.rstList.push(new Restaurant(rst))
+       self.rstList.push(new Restaurant(rst));
     });
 
     this.filteredList = ko.computed(function () {
@@ -157,11 +157,11 @@ function AppViewModel() {
             return  self.rstList();
         } else {
             console.log(222);
-            for (var i = 0; i < markers.length; i++) {
-                var name = markers[i].name;
+            for (var j = 0; j < markers.length; j++) {
+                var name = markers[j].name;
                 console.log(name);
                 var result = name.toLowerCase().search(query) >= 0;
-                setVisible(markers[i].marker, result);
+                setVisible(markers[j].marker, result);
                 console.log(result);
             }
             return  self.rstList();
