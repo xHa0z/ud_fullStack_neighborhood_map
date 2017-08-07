@@ -59,15 +59,6 @@ function initMap() {
             icon: defaultIcon
         });
         markers.push({'marker': marker, 'name' : marker.title});
-        // marker.addListener('click', function() {
-        //     populateInfoWindow(this, infoWindow);
-        // });
-        // marker.addListener('mouseover', function() {
-        //     this.setIcon(highlightedIcon);
-        // });
-        // marker.addListener('mouseout', function() {
-        //     this.setIcon(defaultIcon);
-        // });
         setMarkerAnimation(marker, infoWindow);
 
     }
@@ -81,6 +72,10 @@ function setMarkerAnimation(marker, infoWindow) {
     var highlightedIcon = makeMarkerIcon('FFFF24');
     marker.addListener('click', function() {
         populateInfoWindow(this, infoWindow);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            marker.setAnimation(null);
+        }, 1000);
     });
     marker.addListener('mouseover', function() {
         this.setIcon(highlightedIcon);
@@ -91,7 +86,7 @@ function setMarkerAnimation(marker, infoWindow) {
     return marker;
 }
 function errorHandler() {
-    console.log("Something wrong with Google Map. Please try again later.");
+    alert("Something wrong with Google Map. Please try again later.");
 }
 
 function populateInfoWindow(marker, infowindow) {
@@ -108,7 +103,11 @@ function populateInfoWindow(marker, infowindow) {
             '<div class="street" style="text-align: center">' + result.location.formattedAddress[0] + "</div>" +
             '<div class="city" style="text-align: center">' + result.location.formattedAddress[1] + "</div>" +
             '<div class="phone" style="text-align: center">' + result.contact.phone + "</div></div>");
-    });
+    }).fail(
+        function () {
+            alert('FourSquare API occurs some errors');
+        }
+    );
     infowindow.marker = marker;
     infowindow.open(map, marker);
     infowindow.addListener('closeclick',function(){
@@ -143,30 +142,42 @@ function AppViewModel() {
     self.rstList = ko.observableArray([]);
     self.query = ko.observable("");
 
-    restaurants.forEach(function(rst) {
-       self.rstList.push(new Restaurant(rst));
-    });
-
     this.filteredList = ko.computed(function () {
         var query = self.query().toLowerCase();
         if (query === "") {
+            restaurants.forEach(function(rst) {
+                self.rstList.push(new Restaurant(rst));
+            });
             console.log(111);
             for (var i = 0; i < markers.length; i++) {
-                setVisible(markers[i].marker, true);
+                markers[i].marker.setMap(map);
             }
             return  self.rstList();
         } else {
             console.log(222);
+            self.rstList.removeAll();
             for (var j = 0; j < markers.length; j++) {
                 var name = markers[j].name;
-                console.log(name);
                 var result = name.toLowerCase().search(query) >= 0;
-                setVisible(markers[j].marker, result);
-                console.log(result);
+                if (result) {
+                    markers[j].marker.setMap(map);
+                    self.rstList.push(new Restaurant(markers[j]))
+                } else {
+                    markers[j].marker.setMap(null);
+                }
+
             }
             return  self.rstList();
         }
     }, self);
+
+    this.clickRst = function(clickedRst) {
+      for (var i = 0; i < markers.length; i++) {
+          if (clickedRst.name() == markers[i].name) {
+              google.maps.event.trigger(markers[i].marker, 'click');
+          }
+      }
+    };
 
 }
 
