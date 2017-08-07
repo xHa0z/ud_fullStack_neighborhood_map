@@ -161,7 +161,7 @@ function AppViewModel() {
                 var result = name.toLowerCase().search(query) >= 0;
                 if (result) {
                     markers[j].marker.setMap(map);
-                    self.rstList.push(new Restaurant(markers[j]))
+                    self.rstList.push(new Restaurant(markers[j]));
                 } else {
                     markers[j].marker.setMap(null);
                 }
